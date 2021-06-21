@@ -51,59 +51,61 @@ const fileStorage = multer.diskStorage({
 });
 const uploadStream = multer({ storage: fileStorage });
 // const uploadStream = multer({dest:'./server/uploads/stream/'});
-mongoose.connect(
-  "mongodb+srv://Admin:admin@cluster0.1sw9x.mongodb.net/thai-tv?retryWrites=true&w=majority",
-  (err, connection) => {
-    console.log(err || connection);
-  }
-);
-
-// mongoose.connect('mongodb://localhost:27017/ThaiTv', (err, connection) => {
-
+// mongoose.connect(
+//   "mongodb+srv://Admin:admin@cluster0.1sw9x.mongodb.net/thai-tv?retryWrites=true&w=majority",
+//   (err, connection) => {
 //     console.log(err || connection);
+//   }
+// );
 
-// })
+mongoose.connect('mongodb://localhost:27017/ThaiTv', (err, connection) => {
+
+    console.log(err || connection);
+
+})
 
 let { Files, Timline, Resaluts } = require("./db/models/uploadedData");
 // let  = require("./db/models/uploadedData");
 let User = require("./db/models/user");
+let History = require("./db/models/history");
+let TimeLine = require("./db/models/timeline");
 const Ffmpeg = require("fluent-ffmpeg");
 
 let myApp = express();
 myApp.use(bodyparser.json());
 // .......admin.......
-myApp.post(
-  "/uploadStream",
-  uploadStream.single("file"),
-  async function (req, res) {
-    // Ffmpeg(req.file.path)
-    //   .on("filenames", function (filenames) {
-    //     console.log("will generate" + filenames.join(", "));
-    //   })
-    //   .on("end", function () {
-    //     console.log("taken");
-    //   })
-    //   .on("err", function (err) {
-    //     console.error(err);
-    //   })
-    //   .screenshot({
-    //     count: 1,
-    //     folder: "./server/uploads/stream/",
-    //     size: "320x240",
-    //     filename: "./thumbnail-%b.jpg",
-    //   });
-    let file = new Files();
-    file.type = "stream";
-    file.name = req.file.originalname;
-    file.poster = "thumbnail-" + req.file.originalname.split(".")[0] + ".jpg";
-    await file.save();
-    res.send("Stream uploaded");
-  }
+myApp.post("/uploadStream", uploadStream.single("file"), async function (req, res) {
+  // Ffmpeg(req.file.path)
+  //   .on("filenames", function (filenames) {
+  //     console.log("will generate" + filenames.join(", "));
+  //   })
+  //   .on("end", function () {
+  //     console.log("taken");
+  //   })
+  //   .on("err", function (err) {
+  //     console.error(err);
+  //   })
+  //   .screenshot({
+  //     count: 1,
+  //     folder: "./server/uploads/stream/",
+  //     size: "320x240",
+  //     filename: "./thumbnail-%b.jpg",
+  //   });
+
+  await Files.deleteMany();
+
+  let file = new Files();
+  file.type = "stream";
+  file.name = req.file.originalname;
+  file.poster = "thumbnail-" + req.file.originalname.split(".")[0] + ".jpg";
+  await file.save();
+  Files.find({}, function (err, file) {
+    res.send(file);
+  });
+}
 );
 // .......admin......
-myApp.post(
-  "/uploadDraw",
-  uploadStream.single("file"),
+myApp.post("/uploadDraw", uploadStream.single("file"),
   async function (req, res) {
     let file = new Files();
     file.type = "draw";
@@ -115,21 +117,42 @@ myApp.post(
 );
 // ......admin notification.....
 myApp.post("/notification", async (req, res) => {
-  let timelinedate = new Timline();
-  timelinedate.date = req.selectedDate;
-  await timelinedate.save();
-  // debugger;
-  res.send("successfully save");
+  console.log(req.body);
+  await TimeLine.deleteMany();
+  let timeline = new TimeLine();
+  timeline.date = req.body.date,
+    timeline.time = req.body.time,
+    await timeline.save();
+    TimeLine.find({}, function (err, timedate) {
+      res.send(timedate);
+    });
+  // let timelinedate = new Timline();
+  // timelinedate.date = req.selectedDate;
+  // await timelinedate.save();
+  // // debugger;
+  // res.send("successfully save");
 });
 // .......admin resaults.......
 myApp.post("/resaultes", async (req, res) => {
-  let resaults = new Resaluts();
-  resaults.first = res;
-  resaults.secondA = res;
-  resaults.secondB = res;
-  resaults.secondC = res;
-  await resaults.save();
-  res.send("Resaltus save");
+  console.log(req.body);
+  let history = new History();
+  history.date = req.body.date,
+    history.time = req.body.time,
+    history.first = req.body.first,
+    history.secondA = req.body.secondA,
+    history.secondB = req.body.secondB,
+    history.secondC = req.body.secondC
+  await history.save();
+  res.json({
+    msg: 'Hostory Saved...!'
+  })
+  // let resaults = new Resaluts();
+  // resaults.first = res;
+  // resaults.secondA = res;
+  // resaults.secondB = res;
+  // resaults.secondC = res;
+  // await resaults.save();
+  // res.send("Resaltus save");
 });
 // ........playlist
 myApp.get("/streamDisplay", async function (req, res) {
@@ -151,7 +174,7 @@ myApp.get("/drawDisplay", async function (req, res) {
 });
 //......... detailes.........
 myApp.post("/drawDetails", async function (req, res) {
-  await Files.find({ date: req.body.date }, function (err, docs) {
+  await History.find({ date: req.body.date }, function (err, docs) {
     if (err) {
       console.log(err);
     } else {
@@ -185,7 +208,7 @@ myApp.get("/delete", async function (req, res) {
   let file = await Files.findById(req.query._id);
   fs.unlink(
     path.resolve(__dirname + "/uploads/straem/" + file.name),
-    (err) => {}
+    (err) => { }
   );
 
   Files.findByIdAndRemove(req.query, function (err, docs) {
