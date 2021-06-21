@@ -1,0 +1,50 @@
+.home-container {
+  width: 100%;
+  background-color: #000000;
+  background-image: url("../../assert/home.gif");
+  margin: auto;
+}
+
+.heading {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 48px;
+  font-weight: bold;
+}
+.home-section {
+  width: 90%;
+  margin: auto;
+  /* border-bottom: 2px solid #f9b707; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.home-heading > div img {
+  width: 89px;
+}
+.title-container {
+  color: #fff;
+  /* text-shadow: 1px 1px #f9b707; */
+  transition: title 2s;
+  transform: scaleX(0deg);
+}
+.notify {
+  /* width: 30%; */
+  color: #f9b707;
+  font-size: 2rem;
+}
+.notify > .notify-icon {
+  /* float: right; */
+  margin: 10px;
+  cursor: pointer;
+}
+@media screen and (max-width: 480px) {
+  .home-section {
+    justify-content: center;
+    border-bottom: none;
+  }
+  .notify,
+  .title-container {
+    display: none;
+  }
+}
