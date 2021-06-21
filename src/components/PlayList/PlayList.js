@@ -89,7 +89,7 @@ const PlayList = (props) => {
           history.push("/");
         });
     } else {
-      document.querySelectorAll("video").forEach((video, index) => {
+      document.querySelectorAll("ReactPlayer").forEach((video, index) => {
         video.poster = stream[index].poster;
       });
     }
@@ -98,21 +98,35 @@ const PlayList = (props) => {
   return (
     <div className="play-list">
       <div className="title flexbox">
-        {timeline ? (
-          <div className="time-line flexcol">
-            <div className="timeline-inner ">
-              <div>
-                <h5
-                  style={{ textAlign: "center" }}
-                  class="animate__animated animate__bounce animate__delay-2s "
-                >
-                  Comming Draw
-                </h5>
-                <marquee style={{ fontSize: "22px" }}>{timeline} </marquee>
-              </div>
+        {/* {timeline ? ( */}
+        <div className="time-line flexcol">
+          {/* <div className="timeline-inner "> */}
+            <div className="time-Line-inner flexcol">
+              <h5
+                style={{
+                  textAlign: "center",
+                  color: "#000",
+                fontWeight: "900",
+                  lineHeight:"10px",
+                }}
+                class="animate__animated animate__bounce animate__delay-2s "
+              >
+                Upcomming Draw
+              </h5>
+              <h5
+                style={{
+                  margin: "auto",
+                  textAlign: "center",
+                fontFamily: "ROBOTO",
+                  color:'#000'
+                }}
+              >
+                {timeline}12-13-2021 06:50 PM
+              </h5>
             </div>
-          </div>
-        ) : null}
+          {/* </div> */}
+        </div>
+        {/* ) : null} */}
       </div>
       <div className="Tv-container">
         <div
@@ -123,6 +137,7 @@ const PlayList = (props) => {
           }}
         >
           <ReactPlayer
+            id="videolink"
             style={{ width: "100%", height: "80vh" }}
             playing="true"
             loop="true"
@@ -149,10 +164,10 @@ const PlayList = (props) => {
                 <TableHead>
                   <TableRow>
                     <StyledTableCell>Date</StyledTableCell>
-                    <StyledTableCell align="center">First</StyledTableCell>
-                    <StyledTableCell align="center">SecondA</StyledTableCell>
-                    <StyledTableCell align="center">SecondB</StyledTableCell>
-                    <StyledTableCell align="center">SecondC</StyledTableCell>
+                    <StyledTableCell align="center">1st</StyledTableCell>
+                    <StyledTableCell align="center">2nd</StyledTableCell>
+                    <StyledTableCell align="center">2nd</StyledTableCell>
+                    <StyledTableCell align="center">2nd</StyledTableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody className={classes.tablebody}>
@@ -202,4 +217,3 @@ const PlayList = (props) => {
 export default connect(function (store) {
   return store;
 })(PlayList);
-

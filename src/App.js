@@ -11,6 +11,7 @@ import Admin from "./components/Admin/Admin";
 import Store from "./redux/store";
 import Login from "./components/Login/Login";
 import SignupPage from './components/SignUp/Sigup';
+import Notification from "./components/Notification/Notification";
 
 function App() {
   return (
@@ -25,7 +26,8 @@ function App() {
               <Route exact path="/" component={Main} />
               <Route path="/drawerdetail" component={Details} />
               <Route path="/stream" component={PlayList} />
-              <Route path="/admin" component={Admin} /> 
+              <Route path="/notification" component={Notification} />
+              <Route path="/admin" component={Admin} />
 
               <Route exact path="/signup" component={SignupPage} />
               {/*
@@ -35,7 +37,7 @@ function App() {
               <Route path="/stream" component={PlayList} />
               <Route path="/admin" render={() => <Admin />} /> */}
             </div>
-          <NavBar />
+            <NavBar />
           </div>
         </BrowserRouter>
       </Provider>

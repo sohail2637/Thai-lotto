@@ -30,27 +30,28 @@ import { useDispatch, useSelector } from "react-redux";
 const useStyles = makeStyles((theme) => ({
   inputLbel: {
     paddingLeft: "0.8rem",
-    fontSize: "16px",
-    color: "#f9b707",
+    fontSize: "20px",
+    color: "#fff",
     // color: "#fff",
   },
   inputfield: {
     backgroundColor: "#fff",
-    padding: '0 10px',
-    borderRadius:'20px',
+    padding: "0 10px",
+    borderRadius: "20px",
   },
+  
   btn: {
     backgroundColor: "#f9b707",
     fontSize: "18px",
     fontWeight: "500",
     width: "100%",
-    lineHeight: '30px',
-    borderRadius:'20px',
-    color: '#fff',
-    margin:'2.5rem auto',
+    lineHeight: "35px",
+    borderRadius: "20px",
+    color: "#000",
+    margin: "2.5rem auto",
     ":hover": {
-      backgroundColor: "#1f293d",
-      color:'#fff',
+      backgroundColor: "#fff",
+      color: "#fff",
     },
   },
   // paper: {
@@ -75,6 +76,7 @@ const Admin = (props) => {
   const [state, setState] = useState({
     resultstime: null,
     date: null,
+    time:null,
     first: null,
     secondA: null,
     secondB: null,
@@ -100,7 +102,7 @@ const Admin = (props) => {
     dispatch(resaults(state));
     const data = state;
     axios
-      .post("/signup", data)
+      .post("/resualts", data)
       .then((res) => {
         console.log("api respons: ", res);
         history.push("/login");
@@ -328,7 +330,7 @@ const Admin = (props) => {
           >
             {" "}
             <label for="First" className={classes.inputLbel}>
-              First
+              1st
             </label>
           </Typography>
           <TextField
@@ -348,13 +350,13 @@ const Admin = (props) => {
           >
             {" "}
             <label for="secondA" className={classes.inputLbel}>
-              SecondA
+              2nd
             </label>
           </Typography>
           <TextField
             onChange={handleChange}
             className={classes.inputfield}
-            name="secondA"
+            name="second"
             type="number"
             required
             fullWidth
@@ -367,14 +369,14 @@ const Admin = (props) => {
             style={{ marginTop: "1rem", textAlign: "left" }}
           >
             {" "}
-            <label for="secondB" className={classes.inputLbel}>
-              SecondB
+            <label for="second" className={classes.inputLbel}>
+              2nd
             </label>
           </Typography>
           <TextField
             onChange={handleChange}
             className={classes.inputfield}
-            name="secondB"
+            name="second"
             type="number"
             required
             fullWidth
@@ -387,8 +389,8 @@ const Admin = (props) => {
             style={{ marginTop: "1rem", textAlign: "left" }}
           >
             {" "}
-            <label for="secondC" className={classes.inputLbel}>
-              SecondC
+            <label for="second" className={classes.inputLbel}>
+              2nd
             </label>
           </Typography>
           <TextField

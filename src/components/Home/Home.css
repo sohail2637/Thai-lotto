@@ -28,9 +28,13 @@
   transition: title 2s;
   transform: scaleX(0deg);
 }
+.thai-lotto{
+  font-size: 50px;
+   font-weight: 900;
+}
 .notify {
   /* width: 30%; */
-  color: #f9b707;
+  color: #fff;
   font-size: 2rem;
 }
 .notify > .notify-icon {
@@ -40,11 +44,19 @@
 }
 @media screen and (max-width: 480px) {
   .home-section {
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: center;
     border-bottom: none;
   }
-  .notify,
-  .title-container {
+  .thai-lotto {
+  font-size: 30px;
+  margin-top: 5px;
+  margin-left: 5px;
+  }
+  .notify{
     display: none;
   }
+.home-heading > div img {
+width: 75px;
+}
 }

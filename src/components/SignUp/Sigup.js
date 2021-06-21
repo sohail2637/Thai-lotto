@@ -155,6 +155,7 @@ const SignupPage = () => {
       .post("/signup", state)
       .then((res) => {
         console.log("api respons: ", res);
+        swal(res.data);
         history.push("/login");
         console.log({ res });
       })

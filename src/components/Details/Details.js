@@ -46,12 +46,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 const StyledTableCell = withStyles((theme) => ({
   head: {
-    backgroundColor: "#f9b707",
+    backgroundColor: "#000",
     color: theme.palette.common.white,
-    fontSize:'16px'
+    fontSize: "20px",
   },
   body: {
-    fontSize: 14,
+    fontSize: 16,
   },
 }))(TableCell);
 
@@ -103,11 +103,9 @@ const Details = () => {
       <div className="draw-dates">
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <div
+            className="datepiker"
             style={{
-              backgroundColor: "#EBE9EA",
-              padding: "10px",
-              width: "305px",
-              borderRadius: "25px",
+              
             }}
           >
             <KeyboardDatePicker
@@ -135,40 +133,46 @@ const Details = () => {
       <div className="draw-table">
         <TableContainer component={Paper}>
           <Table className={classes.table} aria-label="customized table">
-            <TableHead >
+            <TableHead>
               <TableRow>
-                <StyledTableCell>Date</StyledTableCell>
-                <StyledTableCell align="center">First</StyledTableCell>
-                <StyledTableCell align="center">SecondA</StyledTableCell>
-                <StyledTableCell align="center">SecondB</StyledTableCell>
-                <StyledTableCell align="center">SecondC</StyledTableCell>
+                <StyledTableCell className="tablehead" lassName="tablehead">
+                  Time
+                </StyledTableCell>
+                <StyledTableCell className="tablehead" align="center">
+                  1st
+                </StyledTableCell>
+                <StyledTableCell className="tablehead" align="center">
+                  2nd
+                </StyledTableCell>
+                <StyledTableCell className="tablehead" align="center">
+                  2nd
+                </StyledTableCell>
+                <StyledTableCell className="tablehead" align="center">
+                  2nd
+                </StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody className={classes.tablebody}>
               {/* {sellerdata.map((item, index) => {
-                return ( */}
+           etur     rn ( */}
               <StyledTableRow>
-                <StyledTableCell
-                  align="center"
-                  component="th"
-                  scope="row"
-                  style={{backgroundColor:'#EEE'}}
-                >
-                  12-13-2021
+                <StyledTableCell className="tablebody" align="center">
+                  08:04 PM
                 </StyledTableCell>
-                <StyledTableCell align="center" >
-                  420
+                <StyledTableCell className="tablebody" align="center">
+                  420234
                 </StyledTableCell>
-                <StyledTableCell align="center" >
-                  310
+                <StyledTableCell className="tablebody" align="center">
+                  310234
                 </StyledTableCell>
-                <StyledTableCell align="center" >
-                  290
+                <StyledTableCell className="tablebody" align="center">
+                  290525
                 </StyledTableCell>
-                <StyledTableCell align="center" >
-                  285
+                <StyledTableCell className="tablebody" align="center">
+                  285344
                 </StyledTableCell>
               </StyledTableRow>
+
               {/* ); })} */}
             </TableBody>
           </Table>

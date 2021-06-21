@@ -52,7 +52,7 @@ const fileStorage = multer.diskStorage({
 const uploadStream = multer({ storage: fileStorage });
 // const uploadStream = multer({dest:'./server/uploads/stream/'});
 mongoose.connect(
-  "mongodb+srv://Admin:admin@cluster0.1sw9x.mongodb.net/thai-tv?retryWrites=true&w=majority",
+  "mongodb+srv://123456sohail:123456sohail@cluster0.chxyr.mongodb.net/Thai?retryWrites=true&w=majority",
   (err, connection) => {
     console.log(err || connection);
   }
