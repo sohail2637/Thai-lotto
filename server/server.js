@@ -104,6 +104,14 @@ myApp.post("/uploadStream", uploadStream.single("file"), async function (req, re
   });
 }
 );
+
+// ========on refresh ========
+myApp.post("/refreshStream",async function (req, res) {
+  Files.find({}, function (err, file) {
+    res.send(file);
+  });
+}
+);
 // .......admin......
 myApp.post("/uploadDraw", uploadStream.single("file"),
   async function (req, res) {
@@ -115,6 +123,7 @@ myApp.post("/uploadDraw", uploadStream.single("file"),
     res.send("Draw uploaded");
   }
 );
+
 // ......admin notification.....
 myApp.post("/notification", async (req, res) => {
   console.log(req.body);
@@ -126,11 +135,12 @@ myApp.post("/notification", async (req, res) => {
     TimeLine.find({}, function (err, timedate) {
       res.send(timedate);
     });
-  // let timelinedate = new Timline();
-  // timelinedate.date = req.selectedDate;
-  // await timelinedate.save();
-  // // debugger;
-  // res.send("successfully save");
+});
+//============refresh notification=======
+myApp.post("/refreshnotification", async (req, res) => {
+    TimeLine.find({}, function (err, timedate) {
+      res.send(timedate);
+    });
 });
 // .......admin resaults.......
 myApp.post("/resaultes", async (req, res) => {
@@ -251,6 +261,7 @@ myApp.post("/login", async function (req, res) {
     });
   }
 });
+
 
 myApp.use(function (err, req, res, next) {
   console.log(err);
