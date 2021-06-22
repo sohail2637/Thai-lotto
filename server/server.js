@@ -53,12 +53,12 @@ const fileStorage = multer.diskStorage({
 });
 const uploadStream = multer({ storage: fileStorage });
 // const uploadStream = multer({dest:'./server/uploads/stream/'});
-// mongoose.connect(
-//   "mongodb+srv://123456sohail:123456sohail@cluster0.chxyr.mongodb.net/Thai?retryWrites=true&w=majority",
-//   (err, connection) => {
-//     console.log(err || connection);
-//   }
-// );
+mongoose.connect(
+  "mongodb+srv://123456sohail:123456sohail@cluster0.chxyr.mongodb.net/Thai?retryWrites=true&w=majority",
+  (err, connection) => {
+    console.log(err || connection);
+  }
+);
 // mongoose.connect(
 //   "mongodb+srv://Admin:admin@cluster0.1sw9x.mongodb.net/thai-tv?retryWrites=true&w=majority",
 //   (err, connection) => {
@@ -66,11 +66,11 @@ const uploadStream = multer({ storage: fileStorage });
 //   }
 // );
 
-mongoose.connect('mongodb://localhost:27017/ThaiTv', (err, connection) => {
+// mongoose.connect('mongodb://localhost:27017/ThaiTv', (err, connection) => {
 
-  console.log(err || connection);
+//   console.log(err || connection);
 
-});
+// });
 //password 
 
 let { Files, Timline, Resaluts } = require("./db/models/uploadedData");
