@@ -1,7 +1,7 @@
 let mongoose = require("mongoose");
 
 let userSchema = mongoose.Schema({
-  email: String | Number,
+  email: String,
   pin: Number,
 });
 

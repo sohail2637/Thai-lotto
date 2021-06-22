@@ -33,6 +33,7 @@ let mongoose = require("mongoose");
 let path = require("path");
 let jwt = require("jsonwebtoken");
 let config = require("./config");
+var nodemailer = require("nodemailer");
 // let fs = require("fs");
 
 // const fileStorage = multer.diskStorage({
@@ -52,12 +53,12 @@ const fileStorage = multer.diskStorage({
 });
 const uploadStream = multer({ storage: fileStorage });
 // const uploadStream = multer({dest:'./server/uploads/stream/'});
-mongoose.connect(
-  "mongodb+srv://123456sohail:123456sohail@cluster0.chxyr.mongodb.net/Thai?retryWrites=true&w=majority",
-  (err, connection) => {
-    console.log(err || connection);
-  }
-);
+// mongoose.connect(
+//   "mongodb+srv://123456sohail:123456sohail@cluster0.chxyr.mongodb.net/Thai?retryWrites=true&w=majority",
+//   (err, connection) => {
+//     console.log(err || connection);
+//   }
+// );
 // mongoose.connect(
 //   "mongodb+srv://Admin:admin@cluster0.1sw9x.mongodb.net/thai-tv?retryWrites=true&w=majority",
 //   (err, connection) => {
@@ -65,24 +66,108 @@ mongoose.connect(
 //   }
 // );
 
-// mongoose.connect('mongodb://localhost:27017/ThaiTv', (err, connection) => {
+mongoose.connect('mongodb://localhost:27017/ThaiTv', (err, connection) => {
 
-//   console.log(err || connection);
+  console.log(err || connection);
 
-// });
+});
+//password 
 
 let { Files, Timline, Resaluts } = require("./db/models/uploadedData");
 // let  = require("./db/models/uploadedData");
 let User = require("./db/models/user");
 let History = require("./db/models/history");
 let TimeLine = require("./db/models/timeline");
-let UpdatePass = require('./db/models/updatepassword');
-let Verify = require('./db/models/verifyemail');
+// let UpdatePass = require('./db/models/updatepassword');
+// let Verify = require('./db/models/verifyemail');
 let SendMessage = require('./db/models/updateemail');
 const Ffmpeg = require("fluent-ffmpeg");
 
 let myApp = express();
 myApp.use(bodyparser.json());
+
+
+var transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  // service: 'gmail',
+  auth: {
+    user: "",
+    pass: "",
+  },
+});
+
+
+myApp.post("/sendemail", async function (req, res) {
+
+  // var mailOptions = {
+  //   from: "",
+  //   to: req.body.email,
+  //   subject: "Please Enter Provided Pin code to verify its you",
+  //   text: req.body.pin,
+  // };
+
+  // transporter.sendMail(mailOptions, function (error, info) {
+  //   if (error) {
+  //     console.log(error);
+  //   } else {
+  //     console.log("Email sent: " + info.response);
+  //   }
+  // });
+
+
+  await SendMessage.deleteMany();
+  let sndmail = new SendMessage();
+  sndmail.email = req.body.email,
+    sndmail.pin = req.body.pin,
+    await sndmail.save();
+res.json({
+  msg:"email and pin saved temporarily"
+})
+
+});
+
+myApp.post('/verifypin', async (req, res) => {
+
+  let verify = await SendMessage.findOne({ email: req.body.email, pin: req.body.pin });
+
+  if (verify) {
+    res.json({
+      success: true,
+    })
+
+  } else {
+    res.json({
+      success: false,
+    })
+  }
+ 
+})
+//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXNzd29yZCI6ImFkbWluIiwiaWF0IjoxNjI0Mzg5NjI5fQ.QMux1c3F3ATX30n_NkCf8SU3cHz-T7Sk8NbGRwvkBpk
+myApp.post("/updatepassword", async function (req, res) {
+  console.log(req.body);
+  let userToken = { password: req.body.password };
+  let token = jwt.sign(userToken, config.secret);
+    console.log(token);
+
+  User.findOneAndUpdate(req.body.email, { password:token}, function (req, res) {
+      console.log('Updated' + res)
+  })
+  res.json({
+      msg: "Updated Password Successfully"
+  });
+});
+myApp.post("/admin", async function (req, res) {
+  try {
+    let resp = await jwt.verify(req.body.token, config.secret);
+    res.send("valid");
+  } catch (e) {
+    res.send(500, { error: "Some error occurred" });
+  }
+});
+
+
 // .......admin.......
 myApp.post(
   "/uploadStream",
@@ -119,7 +204,7 @@ myApp.post(
 );
 
 // ========on refresh ========
-myApp.post("/refreshStream",async function (req, res) {
+myApp.post("/refreshStream", async function (req, res) {
   Files.find({}, function (err, file) {
     res.send(file);
   });
@@ -139,71 +224,23 @@ myApp.post(
   }
 );
 
-<<<<<<< HEAD
-myApp.get("/load-results", async (req, res) => {
-  try {
-    let result = await History.find();
-
-    if (result.length > 1) {
-      result = result[result.length - 1];
-    } else if (result.length == 1) {
-      result = result[0];
-    }
-
-    res.json({ success: true, result: result.toJSON() });
-  } catch (e) {
-    res.status(500).json({
-      success: true,
-    });
-  }
-});
-
-myApp.get("/get_notification", async (req, res) => {
-  try {
-    let notification = await TimeLine.findOne();
-    res.json(notification.toJSON());
-  } catch (e) {
-    res.status(500).json({
-      message: e.message,
-    });
-  }
-});
-
-=======
->>>>>>> bfb649eaa78cd8f100819091a773103f67a0255d
 // ......admin notification.....
 myApp.post("/notification", async (req, res) => {
   console.log(req.body);
   await TimeLine.deleteMany();
   let timeline = new TimeLine();
-<<<<<<< HEAD
-  let dt = new Date(req.body.selectedDate);
-  timeline.date = dt.toLocaleDateString();
-  timeline.time = dt.toLocaleTimeString();
-  timeline.selectedDate = req.body.selectedDate;
-  await timeline.save();
-  res.send(timeline);
-  // TimeLine.find({}, function (err, timedate) {
-  // });
-  // let timelinedate = new Timline();
-  // timelinedate.date = req.selectedDate;
-  // await timelinedate.save();
-  // // debugger;
-  // res.send("successfully save");
-=======
   timeline.date = req.body.date,
     timeline.time = req.body.time,
     await timeline.save();
-    TimeLine.find({}, function (err, timedate) {
-      res.send(timedate);
-    });
+  TimeLine.find({}, function (err, timedate) {
+    res.send(timedate);
+  });
 });
 //============refresh notification=======
 myApp.post("/refreshnotification", async (req, res) => {
-    TimeLine.find({}, function (err, timedate) {
-      res.send(timedate);
-    });
->>>>>>> bfb649eaa78cd8f100819091a773103f67a0255d
+  TimeLine.find({}, function (err, timedate) {
+    res.send(timedate);
+  });
 });
 
 // .......admin resaults.......
@@ -260,35 +297,7 @@ myApp.post("/drawDetails", async function (req, res) {
     }
   });
 });
-myApp.post("/sendemail", async function (req, res) {
-  const sendmsg = new SendMessage();
-  try {
-    sendmsg.email = req.email;
-    sendmsg.pin = req.pin;
-    res.send('Send Msg on email');
-  } catch (e) {
-    res.send(e);
-    
-  }
-});
 
-myApp.get('/vaifypin', (req, res) => {
-  const verify = new Verify();
-  verify.pin = req.pin;
-})
-myApp.post("/updatepassword", async function (req, res) {
-  let updatepas = new UpdatePass();
-  updatepas.password=req.password;
-
-});
-myApp.post("/admin", async function (req, res) {
-  try {
-    let resp = await jwt.verify(req.body.token, config.secret);
-    res.send("valid");
-  } catch (e) {
-    res.send(500, { error: "Some error occurred" });
-  }
-});
 
 // ......admin api .....
 myApp.get("/uploadedRecord", async function (req, res) {
@@ -306,7 +315,7 @@ myApp.get("/delete", async function (req, res) {
   let file = await Files.findById(req.query._id);
   fs.unlink(
     path.resolve(__dirname + "/uploads/straem/" + file.name),
-    (err) => {}
+    (err) => { }
   );
 
   Files.findByIdAndRemove(req.query, function (err, docs) {
@@ -320,8 +329,8 @@ myApp.get("/delete", async function (req, res) {
 
 myApp.post("/delete-video", async function (req, res) {
   try {
-    await fs.unlink("./uploads/stream/" + req.body.videoID, () => {});
-    await fs.unlink("./server/uploads/stream/" + req.body.videoID, () => {});
+    await fs.unlink("./uploads/stream/" + req.body.videoID, () => { });
+    await fs.unlink("./server/uploads/stream/" + req.body.videoID, () => { });
     res.status(200).json({
       message: "OK",
     });
@@ -333,14 +342,29 @@ myApp.post("/delete-video", async function (req, res) {
 });
 
 myApp.post("/signup", async function (req, res) {
-  let user = new User();
-  user.name = req.body.name;
-  user.email = req.body.email;
-  user.password = req.body.password;
-
-  await user.save();
   console.log(req.body);
-  res.send("signup successfully");
+  let user1 = await User.findOne({
+    email: req.body.email,
+  });
+  if (user1) {
+    res.json({
+      msg: "Email Already in Use",
+    });
+  } else {
+    let userToken = { password: req.body.password };
+    let token = jwt.sign(userToken, config.secret);
+    console.log(token);
+    let user = new User();
+    
+      (user.email = req.body.email),
+      (user.password = token),
+     
+
+    await user.save();
+    res.json({
+      msg: "Signed Up...!",
+    });
+  }
 });
 
 myApp.post("/login", async function (req, res) {
