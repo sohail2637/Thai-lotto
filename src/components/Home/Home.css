@@ -50,11 +50,14 @@
   }
   .thai-lotto {
   font-size: 30px;
-  margin-top: 5px;
+  margin-top:16px;
   margin-left: 5px;
   }
   .notify{
     display: none;
+  }
+  .home-heading {
+    margin-top: 10px;
   }
 .home-heading > div img {
 width: 75px;

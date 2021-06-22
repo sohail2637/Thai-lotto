@@ -22,6 +22,7 @@ import {
   Grid,
   Typography,
 } from "@material-ui/core";
+import Swal from "sweetalert2";
 import InputBase from "@material-ui/core/InputBase";
 import { useSelector } from "react-redux";
 // import axios from "axios";
@@ -68,9 +69,7 @@ const Details = () => {
   let [record, setRecord] = useState([]);
   const [value, setValue] = useState(new Date());
   let [state, setState] = useState(false);
-  const [selectedDate, setSelectedDate] = React.useState(
-    new Date("2014-08-18T21:11:54")
-  );
+  const [selectedDate, setSelectedDate] = React.useState(new Date());
 
   const handleChange = () => {
     setState(false);
@@ -78,36 +77,50 @@ const Details = () => {
   const handleDateChange = (evt) => {
     console.log("selected data", evt);
     setSelectedDate(evt);
-    drawData();
+    drawData(evt);
   };
 
-  async function drawData() {
+  async function drawData(evt) {
     let date = value.toDateString();
     const resp = await axios
-      .post("/drawDetails", { date: selectedDate })
+      .post("/drawDetails", { date: evt.toDateString() })
       .then((res) => {
         console.log(res.data);
         setRecord(res.data);
       })
       .catch((err) => {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Something went wrong!",
+          footer: '<a href="">Why do I have this issue?</a>',
+        });
+        const Tost = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener("mouseenter", Swal.stopTimer);
+            toast.addEventListener("mouseleave", Swal.resumeTimer);
+          },
+        });
+
+        Tost.fire({
+          icon: "success",
+          title: err,
+        });
         console.log(err);
       });
     console.log(record);
   }
 
-  //   setTimeout(() => {
-  //     console.log(selectedDate);
-  //   }, 4000);
   return (
     <div className="drawDetails flexcol">
       <div className="draw-dates">
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <div
-            className="datepiker"
-            style={{
-              
-            }}
-          >
+          <div className="datepiker" style={{}}>
             <KeyboardDatePicker
               disableToolbar
               variant="outlied"
@@ -124,59 +137,57 @@ const Details = () => {
             />
           </div>
         </MuiPickersUtilsProvider>
-        {/* <div><p>{value.toDateString()}</p></div> */}
-        {/* <div ><FcCalendar onClick={() => { setState(true) }} className='calendar' /></div>
-            <div onClick={handleChange} className={state == true ? 'calendarView' : 'changeView'}>
-                <Calendar onChange={setValue} value={value} />
-            </div> */}
+
       </div>
       <div className="draw-table">
-        <TableContainer component={Paper}>
-          <Table className={classes.table} aria-label="customized table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell className="tablehead" lassName="tablehead">
-                  Time
-                </StyledTableCell>
-                <StyledTableCell className="tablehead" align="center">
-                  1st
-                </StyledTableCell>
-                <StyledTableCell className="tablehead" align="center">
-                  2nd
-                </StyledTableCell>
-                <StyledTableCell className="tablehead" align="center">
-                  2nd
-                </StyledTableCell>
-                <StyledTableCell className="tablehead" align="center">
-                  2nd
-                </StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody className={classes.tablebody}>
-              {/* {sellerdata.map((item, index) => {
-           etur     rn ( */}
-              <StyledTableRow>
-                <StyledTableCell className="tablebody" align="center">
-                  08:04 PM
-                </StyledTableCell>
-                <StyledTableCell className="tablebody" align="center">
-                  420234
-                </StyledTableCell>
-                <StyledTableCell className="tablebody" align="center">
-                  310234
-                </StyledTableCell>
-                <StyledTableCell className="tablebody" align="center">
-                  290525
-                </StyledTableCell>
-                <StyledTableCell className="tablebody" align="center">
-                  285344
-                </StyledTableCell>
-              </StyledTableRow>
-
-              {/* ); })} */}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        {record ? (
+          <TableContainer component={Paper}>
+            <Table className={classes.table} aria-label="customized table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell className="tablehead" lassName="tablehead">
+                    Time
+                  </StyledTableCell>
+                  <StyledTableCell className="tablehead" align="center">
+                    1st
+                  </StyledTableCell>
+                  <StyledTableCell className="tablehead" align="center">
+                    2nd
+                  </StyledTableCell>
+                  <StyledTableCell className="tablehead" align="center">
+                    2nd
+                  </StyledTableCell>
+                  <StyledTableCell className="tablehead" align="center">
+                    2nd
+                  </StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody className={classes.tablebody}>
+                {record.map((item, index) => {
+                  return (
+                    <StyledTableRow>
+                      <StyledTableCell className="tablebody" align="center">
+                        {item.date}
+                      </StyledTableCell>
+                      <StyledTableCell className="tablebody" align="center">
+                        {item.first}
+                      </StyledTableCell>
+                      <StyledTableCell className="tablebody" align="center">
+                        {item.secondA}
+                      </StyledTableCell>
+                      <StyledTableCell className="tablebody" align="center">
+                        {item.secondB}
+                      </StyledTableCell>
+                      <StyledTableCell className="tablebody" align="center">
+                        {item.secondC}
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        ) : null}
       </div>
     </div>
   );

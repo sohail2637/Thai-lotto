@@ -10,7 +10,7 @@ import Home from "./components/Home/Home";
 import Admin from "./components/Admin/Admin";
 import Store from "./redux/store";
 import Login from "./components/Login/Login";
-import SignupPage from './components/SignUp/Sigup';
+import SignupPage from "./components/SignUp/Sigup";
 import Notification from "./components/Notification/Notification";
 
 function App() {
@@ -22,20 +22,21 @@ function App() {
             <div className="section">
               <Home />
 
-              <Route exact path="/login" component={Login} />
+              {/* <Route exact path="/login" component={Login} />
               <Route exact path="/" component={Main} />
               <Route path="/drawerdetail" component={Details} />
               <Route path="/stream" component={PlayList} />
               <Route path="/notification" component={Notification} />
-              <Route path="/admin" component={Admin} />
-
-              <Route exact path="/signup" component={SignupPage} />
-              {/*
+              <Route path="/admin" component={Admin} /> */}
+{/* 
+              */}
+              <Route exact path="/signup" component={SignupPage} /> 
+              
               <Route exact path="/login" component={Login} />
-              <Route exact path="/home" component={Main} />
+              <Route exact path="/" component={Main} />
               <Route path="/drawerdetail" component={Details} />
-              <Route path="/stream" component={PlayList} />
-              <Route path="/admin" render={() => <Admin />} /> */}
+              <Route path="/stream" component={PlayList} />                            <Route path="/notification" component={Notification} />
+              <Route path="/admin" render={() => <Admin />} />
             </div>
             <NavBar />
           </div>

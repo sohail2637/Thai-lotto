@@ -9,11 +9,12 @@ export const timelineSlice = createSlice({
   },
   reducers: {
     timeline: (state, action) => {
-      state.timelinedata = action.payload;
+      state.timelinedata = action.payload
+        // console.log("this is reudcer timelis",action.payload);
     },
     resaults: (state,action) => {
       state.resault= action.payload;
-      console.log("reducer payload", state.resault);
+      console.log("resaults reducer payload", state.resault);
     },
     drawvideo: (state, action)=>{
       state.video = action.payload;

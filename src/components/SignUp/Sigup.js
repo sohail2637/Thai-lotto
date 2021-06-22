@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Grid,
@@ -133,10 +133,13 @@ const useStyles = makeStyles((theme) => ({
 const SignupPage = () => {
   const classes = useStyles();
   const history = useHistory();
+  const [varifed, setvarifey] = useState(false);
+  const [code, setCode]=useState();
   const [state, setState] = React.useState({
-    userName: "",
+    resetpassword: "",
     email: "",
-    password: "",
+    pincode: "",
+    newpassword: "",
   });
 
   const handleChange = (event) => {
@@ -148,18 +151,41 @@ const SignupPage = () => {
     console.log({ [name]: event.target.value });
   };
 
-  const submationform = (event) => {
-    event.preventDefault();
-    console.log(state);
-    axios
-      .post("/signup", state)
-      .then((res) => {
-        console.log("api respons: ", res);
-        swal(res.data);
-        history.push("/login");
-        console.log({ res });
-      })
-      .catch((error) => swal(error));
+  // const submationform = (event) => {
+  //   event.preventDefault();
+  //   console.log(state);
+  //   axios
+  //     .post("/signup", state)
+  //     .then((res) => {
+  //       console.log("api respons: ", res);
+  //       swal(res.data);
+  //       history.push("/login");
+  //       console.log({ res });
+  //     })
+  //     .catch((error) => swal(error));
+  // };
+  const sendemail = () => {
+   const  randemcode = Math.floor(100000 + Math.random() * 900000);
+    setCode(randemcode);
+    console.log(randemcode);
+    axios("/sendemail", { email: state.email, pin: code })
+      .then((res) => console.log(res))
+      .catch((error) => console.log(error));
+  };
+  const verifycode = () => {
+    axios("/vaifypin", { pin: state.pincode }).
+      then((res) => {
+        console.log(res)
+        setvarifey(true);
+      }).catch(error => console.log(error));
+  };
+  const upDatePassword = () => {
+    axios("/updatepassword", {
+      email: state.email,
+      password: state.newpassword,
+    })
+      .then((res) => console.log(res))
+      .catch((error) => console.log(error));
   };
 
   return (
@@ -169,155 +195,110 @@ const SignupPage = () => {
           <Grid item xs={12} lg={12} className={classes.formContainer}>
             <Container
               maxWidth="md"
-              style={{ height: "70vh", border: "2px solid #f9b707" }}
+              style={{ minHeight: "70vh", border: "2px solid #f9b707" }}
             >
               {/* <form onSubmit={handleSubmit(onSubmit)}> */}
-              <form onSubmit={submationform}>
-                <Typography
-                  variant="h6"
-                  style={{ marginTop: "1rem", textAlign: "left" }}
-                >
-                  <label for="fname" className={classes.inputLbel}>
-                    Username
-                  </label>
-                </Typography>
-
-                <TextField
-                  style={{
-                    borderBottom: "1px solid #ccc",
-                    paddingLeft: "14px",
-                  }}
-                  onChange={handleChange}
-                  name="userName"
-                  fullWidth
-                  required
-                  placeholder="User Name"
-                  id="outlined-helperText"
-                  variant="outlined"
-                />
-
-                <Typography
-                  variant="h6"
-                  style={{ marginTop: "1rem", textAlign: "left" }}
-                >
-                  {" "}
-                  <label for="fname" className={classes.inputLbel}>
-                    Email
-                  </label>
-                </Typography>
-
-                <TextField
-                  style={{
-                    borderBottom: "1px solid #ccc",
-                    paddingLeft: "14px",
-                  }}
-                  fullWidth
-                  placeholder="Email"
-                  id="outlined-helperText"
-                  required
-                  variant="outlined"
-                  onChange={handleChange}
-                  name="email"
-                />
-
-                <Typography
-                  variant="h6"
-                  style={{ marginTop: "1rem", textAlign: "left" }}
-                >
-                  {" "}
-                  <label for="fname" className={classes.inputLbel}>
-                    password
-                  </label>
-                </Typography>
-
-                <TextField
-                  style={{
-                    borderBottom: "1px solid #ccc",
-                    paddingLeft: "14px",
-                  }}
-                  onChange={handleChange}
-                  name="password"
-                  fullWidth
-                  placeholder="password"
-                  required
-                  type="password"
-                  id="outlined-helperText"
-                  variant="outlined"
-                />
-
-                <Button
-                  type="submit"
-                  fullWidth={true}
-                  className={classes.seeBtn}
-                  fullWidth
-                >
-                  Submit
-                </Button>
-              </form>
-
-              <Box className={classes.orContainer}>
-                <div className={classes.firstLine} />
-                <span style={{ paddingRight: 20, paddingLeft: 20 }}>OR</span>
-                <div className={classes.firstLine} />
-              </Box>
-
-              <Box
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  marginTop: "2rem",
-                }}
+              {/* <form onSubmit={submationform}> */}
+              <Typography
+                variant="h6"
+                style={{ marginTop: "1rem", textAlign: "left" }}
               >
-                <Typography>
-                  Already have account? <Link to="/login">Login</Link>
-                </Typography>
-              </Box>
-              {/* </div> */}
+                <label for="fname" className={classes.inputLbel}>
+                  Email
+                </label>
+              </Typography>
+              <TextField
+                style={{
+                  borderBottom: "1px solid #ccc",
+                  paddingLeft: "14px",
+                }}
+                onChange={handleChange}
+                name="email"
+                fullWidth
+                required
+                placeholder="Email..."
+                id="outlined-helperText"
+                variant="outlined"
+              />
+              <Button
+                onClick={() => sendemail()}
+                fullWidth={true}
+                className={classes.seeBtn}
+                fullWidth
+              >
+                Send Message
+              </Button>
+              <Typography
+                variant="h6"
+                style={{ marginTop: "1rem", textAlign: "left" }}
+              >
+                {" "}
+                <label for="fname" className={classes.inputLbel}>
+                  pin Code
+                </label>
+              </Typography>
+              <TextField
+                type="number"
+                style={{
+                  borderBottom: "1px solid #ccc",
+                  paddingLeft: "14px",
+                }}
+                onChange={handleChange}
+                name="password"
+                fullWidth
+                name="pincode"
+                placeholder="pin-code"
+                required
+                id="outlined-helperText"
+                variant="outlined"
+              />
+              <Button
+                onClick={() => verifycode()}
+                fullWidth={true}
+                className={classes.seeBtn}
+                fullWidth
+              >
+                Verify Code
+              </Button>
+              {varifed ? (
+                <>
+                  <Typography
+                    variant="h6"
+                    style={{ marginTop: "1rem", textAlign: "left" }}
+                  >
+                    {" "}
+                    <label for="fname" className={classes.inputLbel}>
+                      New Password
+                    </label>
+                  </Typography>
+                  <TextField
+                    style={{
+                      borderBottom: "1px solid #ccc",
+                      paddingLeft: "14px",
+                    }}
+                    onChange={handleChange}
+                    name="newpassword"
+                    fullWidth
+                    name="pincode"
+                    placeholder="New Password"
+                    required
+                    type="password"
+                    id="outlined-helperText"
+                    variant="outlined"
+                  />
+                  <Button
+                    onClick={() => upDatePassword()}
+                    fullWidth={true}
+                    className={classes.seeBtn}
+                    fullWidth
+                  >
+                    Update Password
+                  </Button>
+                </>
+              ) : null}
+              {/* </form> */}
             </Container>
           </Grid>
-          {/* 
-          <Hidden xsDown>
-            <Grid item xs={12} lg={6} className={classes.navBarContainer}>
-              <div className={classes.RegisterContent}>
-                <Box>
-                  {state.image ? (
-                    <img
-                      src={URL.createObjectURL(state.image)}
-                      className={classes.uplodimg}
-                    />
-                  ) : (
-                    <img
-                      src="/images/gallery/04.jpg"
-                      className={classes.uplodimg}
-                    />
-                  )}
-                </Box>
-                <Box className={classes.boxContainer}>
-                  <Typography
-                    style={{
-                      fontSize: "36px",
-                      fontFamily: "Spartan",
-                      color: "#f33f3f",
-                    }}
-                  >
-                    Our Priority is your{" "}
-                  </Typography>
-                  <Typography className={classes.security}>taste</Typography>
-                </Box>
-                <Box>
-                  <Typography
-                    style={{
-                      color: "#232323",
-                      fontSize: "18px",
-                      lineHeight: "40px",
-                    }}
-                  >
-                    Get pure home made food
-                  </Typography>
-                </Box>
-              </div>
-            </Grid>
-          </Hidden> */}
         </Grid>
       </div>
     </div>

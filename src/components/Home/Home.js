@@ -10,7 +10,7 @@ const Home = () => {
       <div className="home-section  flexbox">
         <div className="home-heading ">
           <div>
-            <img src="/logo.jpeg" alt="not found" />
+            <img src="/logo.jpeg" alt="not found"  />
           </div>
         </div>
 

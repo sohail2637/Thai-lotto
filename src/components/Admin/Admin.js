@@ -22,7 +22,7 @@ import {
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
-
+import LockIcon from "@material-ui/icons/Lock";
 import "./admin.css";
 import { timeline, resaults, drawvideo } from "../../redux/time-line-reducers";
 import { useDispatch, useSelector } from "react-redux";
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     padding: "0 10px",
     borderRadius: "20px",
   },
-  
+
   btn: {
     backgroundColor: "#f9b707",
     fontSize: "18px",
@@ -54,10 +54,15 @@ const useStyles = makeStyles((theme) => ({
       color: "#fff",
     },
   },
-  // paper: {
-  //   width: "100%",
-  // },
 }));
+
+function convertTZ(date, tzString) {
+  return new Date(
+    (typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", {
+      timeZone: tzString,
+    })
+  );
+}
 
 let geneatedThumbs = false;
 const Admin = (props) => {
@@ -68,15 +73,13 @@ const Admin = (props) => {
   let [draw, setDraw] = useState({});
   let [record, setRecord] = useState([]);
   const timelineData = useSelector((state) => state.timeline.timelinedata);
-  const parsedata = JSON.parse(timelineData);
 
   const [selectedDate, setSelectedDate] = React.useState(
-    new Date("2014-08-18T21:11:54")
+    convertTZ(new Date(), "Asia/Bangkok")
   );
   const [state, setState] = useState({
-    resultstime: null,
     date: null,
-    time:null,
+    time: null,
     first: null,
     secondA: null,
     secondB: null,
@@ -99,14 +102,33 @@ const Admin = (props) => {
     event.preventDefault();
 
     console.log(state);
-    dispatch(resaults(state));
     const data = state;
+    data.date = selectedDate.toDateString();
     axios
       .post("/resualts", data)
       .then((res) => {
         console.log("api respons: ", res);
-        history.push("/login");
-        console.log({ res });
+        const respons = JSON.parse(res.config.data);
+        dispatch(resaults(respons));
+
+        // history.push("/login");
+        console.log(res.config.data);
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 5000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener("mouseenter", Swal.stopTimer);
+            toast.addEventListener("mouseleave", Swal.resumeTimer);
+          },
+        });
+
+        Toast.fire({
+          icon: "success",
+          title: "Hostory Saved...!",
+        });
       })
       .catch((error) => swal(error));
   };
@@ -114,14 +136,11 @@ const Admin = (props) => {
     headers: { "content-type": "multipart/form-data" },
   };
   useEffect(async () => {
-    // const resp = await axios.post('/admin', { token: localStorage.getItem('token') }).then((res) => {
-    //   console.log(res.data)
-    //   // setAdmin(res.data);
-
-    // }).catch((err) => {
-    //   console.log(err);
-    //   history.push('/');
-    // })
+    const parsedata = JSON.parse(timelineData);
+    setState({
+      ...state,
+      date: parsedata,
+    });
     const res = await axios
       .get("/uploadedRecord")
       .then((res) => {
@@ -137,12 +156,11 @@ const Admin = (props) => {
 
     form.append("file", video);
 
-    // let index = props.uploadReducer.stream.length;
-    // debugger;
     const resp = await axios
       .post("/uploadStream", form, config)
       .then((res) => {
         console.log(res.data);
+        dispatch(drawvideo(res.data));
 
         const Toast = Swal.mixin({
           toast: true,
@@ -160,26 +178,23 @@ const Admin = (props) => {
           icon: "success",
           title: "Stream uploaded",
         });
-        dispatch(drawvideo(res.data));
-        // props.dispatch({
-        //   type: "UPLOAD_STREAM",
-        //   id: index + 1,
-        //   file: res.data,
-        // });
       })
       .catch((err) => {
         console.log(err);
       });
   }
   const setNotification = () => {
-    const data = JSON.stringify(selectedDate);
-    console.log(data);
-    dispatch(timeline(data));
+    let data = selectedDate;
+
+    data = selectedDate.toISOString();
+
     axios
       .post("/notification", { selectedDate: data })
       .then((res) => {
-        console.log(res);
-        const Toast = Swal.mixin({
+        const respons = JSON.parse(res.config.data);
+        dispatch(timeline(respons.selectedDate));
+
+        const Tost = Swal.mixin({
           toast: true,
           position: "top-end",
           showConfirmButton: false,
@@ -190,16 +205,15 @@ const Admin = (props) => {
             toast.addEventListener("mouseleave", Swal.resumeTimer);
           },
         });
+
+        Tost.fire({
+          icon: "success",
+          title: "Notification update",
+        });
       })
       .catch((err) => console.log(err));
-    // .............testig data............
-    // history.push("/");
   };
   const handleChange = (event) => {
-    setState({
-      ...state,
-      resultstime: parsedata,
-    });
     const name = event.target.name;
     setState({
       ...state,
@@ -246,13 +260,20 @@ const Admin = (props) => {
   return (
     <div className="main-container flexcol">
       <div className="admin-container">
-        <div className="videos flexbox">
-          <input
-            type="file"
-            // style={{ color: "#fff" }}
-            onChange={(evt) => onVideoChange(evt)}
-          />
-          <button onClick={uploadVideos}>Upload Video</button>
+        <div className="admin-titel  flexbox">
+          <div className="videos flexbox">
+            <input
+              type="file"
+              // style={{ color: "#fff" }}
+              onChange={(evt) => onVideoChange(evt)}
+            />
+            <button onClick={uploadVideos}>Upload Video</button>
+          </div>
+          <div className="reseticon">
+            <Link to="/login">
+              <LockIcon fontSize="large" style={{ color: "#000" }} />
+            </Link>{" "}
+          </div>
         </div>
 
         <div className="draw flexbox">
@@ -269,7 +290,6 @@ const Admin = (props) => {
                 disableToolbar
                 variant="outlied"
                 format="MM/dd/yyyy"
-                // margin="normal"
                 variant="outlined"
                 id="date-picker-inline"
                 label="Date picker inline"
@@ -289,7 +309,6 @@ const Admin = (props) => {
               }}
             >
               <KeyboardTimePicker
-                // margin="normal"
                 variant="outlined"
                 id="time-picker"
                 label="Time picker"
@@ -323,7 +342,6 @@ const Admin = (props) => {
       </div>
       <div className="resault-container flexcol">
         <form onSubmit={submationform}>
-          {/* <Paper className={classes.paper}> */}
           <Typography
             variant="h6"
             style={{ marginTop: "1rem", textAlign: "left" }}
@@ -356,7 +374,7 @@ const Admin = (props) => {
           <TextField
             onChange={handleChange}
             className={classes.inputfield}
-            name="second"
+            name="secondA"
             type="number"
             required
             fullWidth
@@ -376,7 +394,7 @@ const Admin = (props) => {
           <TextField
             onChange={handleChange}
             className={classes.inputfield}
-            name="second"
+            name="secondB"
             type="number"
             required
             fullWidth
@@ -404,14 +422,9 @@ const Admin = (props) => {
             id="outlined-helperText"
             variant="outlined"
           />
-          <Button
-            className={classes.btn}
-            type="submit"
-            variant="outlined"
-          >
+          <Button className={classes.btn} type="submit" variant="outlined">
             Submit
           </Button>
-          {/* </Paper> */}
         </form>
 
         <div className="details">

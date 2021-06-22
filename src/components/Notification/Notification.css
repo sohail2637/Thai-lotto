@@ -25,6 +25,27 @@
   text-align: left;
 
 }
+.booking-btn{
+  width: 100%;
+  margin: auto;
+  height: 80px;
+}
+.booking-btn>a{
+  font-size: 18px;
+  font-weight: 700;;
+  line-height: 45px;
+  padding:0px 15px;
+  
+  border-radius: 15px;
+  background: #51b29b;
+  color: #fff;
+
+}
+.booking-btn>a:hover{
+  background-color: #fff;
+  color: #000;
+}
+
 .timeline-title {
   font-size: 16px;
   color: #fff;

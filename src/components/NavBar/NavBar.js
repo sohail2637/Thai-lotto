@@ -3,6 +3,8 @@ import { FcHome } from "react-icons/fc";
 import { FaVideo } from "react-icons/fa";
 import { AiFillHeart } from "react-icons/ai";
 import { Link } from "react-router-dom";
+import HistoryIcon from "@material-ui/icons/History";
+import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
 
 import "./NavBar.css";
 
@@ -19,12 +21,12 @@ const NavBar = () => {
             </li>
             <li>
               <Link to="/drawerdetail">
-                <FaVideo />
+                <HistoryIcon fontSize="large" />
               </Link>
             </li>
             <li>
               <Link to="/admin">
-                <AiFillHeart />
+                <SupervisorAccountIcon fontSize="large" />
               </Link>
             </li>
           </ul>
