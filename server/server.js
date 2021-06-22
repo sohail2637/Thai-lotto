@@ -117,6 +117,14 @@ myApp.post(
     });
   }
 );
+
+// ========on refresh ========
+myApp.post("/refreshStream",async function (req, res) {
+  Files.find({}, function (err, file) {
+    res.send(file);
+  });
+}
+);
 // .......admin......
 myApp.post(
   "/uploadDraw",
@@ -131,6 +139,7 @@ myApp.post(
   }
 );
 
+<<<<<<< HEAD
 myApp.get("/load-results", async (req, res) => {
   try {
     let result = await History.find();
@@ -160,11 +169,14 @@ myApp.get("/get_notification", async (req, res) => {
   }
 });
 
+=======
+>>>>>>> bfb649eaa78cd8f100819091a773103f67a0255d
 // ......admin notification.....
 myApp.post("/notification", async (req, res) => {
   console.log(req.body);
   await TimeLine.deleteMany();
   let timeline = new TimeLine();
+<<<<<<< HEAD
   let dt = new Date(req.body.selectedDate);
   timeline.date = dt.toLocaleDateString();
   timeline.time = dt.toLocaleTimeString();
@@ -178,6 +190,20 @@ myApp.post("/notification", async (req, res) => {
   // await timelinedate.save();
   // // debugger;
   // res.send("successfully save");
+=======
+  timeline.date = req.body.date,
+    timeline.time = req.body.time,
+    await timeline.save();
+    TimeLine.find({}, function (err, timedate) {
+      res.send(timedate);
+    });
+});
+//============refresh notification=======
+myApp.post("/refreshnotification", async (req, res) => {
+    TimeLine.find({}, function (err, timedate) {
+      res.send(timedate);
+    });
+>>>>>>> bfb649eaa78cd8f100819091a773103f67a0255d
 });
 
 // .......admin resaults.......
@@ -338,6 +364,7 @@ myApp.post("/login", async function (req, res) {
     });
   }
 });
+
 
 myApp.use(function (err, req, res, next) {
   console.log(err);
