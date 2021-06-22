@@ -368,25 +368,69 @@ myApp.post("/signup", async function (req, res) {
 });
 
 myApp.post("/login", async function (req, res) {
-  let user = await User.findOne({
-    name: req.body.name,
-    password: req.body.password,
-  });
+  console.log(req.body);
+  let user = await User.findOne(
+    {
+      email: req.body.email,
+    },
+    function (err, docs) {
+      if (docs) {
+        console.log(docs._doc.password);
+        var decoded = jwt_decode(docs._doc.password);
+        console.log(decoded);
+        if (decoded.password == req.body.password) {
+          console.log("Password");
 
-  if (user) {
-    let userID = { id: user.id };
-    jwt.sign(userID, config.secret, { expiresIn: "3d" }, (errr, token) => {
-      res.json({
-        token,
-        success: true,
-        userID,
-      });
-    });
-  } else {
-    res.json({
-      success: false,
-    });
-  }
+          let userToken = { id: docs._doc._id };
+          jwt.sign(
+            userToken,
+            config.secret,
+            {
+              expiresIn: "3d",
+            },
+            (err, token) => {
+              res.json({
+                token,
+                success: true,
+                msg: "User Found",
+                _id: docs._doc._id,
+                email: docs._doc.email,
+              });
+            }
+          );
+        } else {
+          res.json({
+            msg: "Wrong Password",
+          });
+        }
+      } else {
+        res.json({
+          msg: "SignUp First..!"
+        })
+      }
+    }
+  );
+
+
+  // let user = await User.findOne({
+  //   name: req.body.name,
+  //   password: req.body.password,
+  // });
+
+  // if (user) {
+  //   let userID = { id: user.id };
+  //   jwt.sign(userID, config.secret, { expiresIn: "3d" }, (errr, token) => {
+  //     res.json({
+  //       token,
+  //       success: true,
+  //       userID,
+  //     });
+  //   });
+  // } else {
+  //   res.json({
+  //     success: false,
+  //   });
+  // }
 });
 
 
